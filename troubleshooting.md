@@ -2,16 +2,20 @@
 ---
 # Troubleshooting
 
-Draft of upstream docs for improving debug experience:
-* https://github.com/konveyor/enhancements/pull/2
+Upstream doc for improving debug experience
+* https://github.com/konveyor/enhancements/tree/master/enhancements/debug
 
 Work In Progress for a flowchart
 * [MTC Debug flowchart](https://app.lucidchart.com/documents/view/d0907ce1-ccf1-4226-86eb-e5332f9d42a4/0_0)
 
-# Generating a must-gather
-`oc adm must-gather --image=registry.redhat.io/rhcam-1-2/openshift-migration-must-gather-rhel8`
+# Using `must-gather`
+
+You can use the `must-gather` tool to collect information for troubleshooting. The `openshift-migration-must-gather-rhel8` image collects migration-specific logs and Custom Resource data that are not collected by the default `must-gather` image.
+
+Run the `must-gather` command: `$ oc adm must-gather --image=registry.redhat.io/rhcam-1-2/openshift-migration-must-gather-rhel8`
 
 # How to Clean Up/Reset a migration
+
 ## Failed migration, how to clean up and retry
 * Ensure stage pods have been cleaned up.  If a migration fails during stage or copy, the 'stage' pods will be retained to allow debugging.  Before proceeding with a reattempt of the migration the stage pods need to be manually removed.
 
@@ -21,7 +25,7 @@ Work In Progress for a flowchart
 
 # How to remove MTC Operator and clean up cluster scoped resources
 1. Remove the 'MigrationController' Custom Resource so the Operator cleans up resources it provisioned 
-    * `oc delete migrationncontroller $resourcename`
+    * `oc delete migrationcontroller $resourcename`
       * Wait for the operator to finish cleaning up the resources it owns 
 2. Remove the Migration Operator
     * For OLM installs
@@ -31,7 +35,7 @@ Work In Progress for a flowchart
       * Refer to the 'operator.yml' used to instantiate the operator
         * `oc delete -f operator.yml` 
           * Alternatively remove the resources inside of the 'openshift-migration' namespace
-3. Remove cluster scopes resources
+3. Remove cluster-scoped resources
 ```
   oc get crds | grep 'migration.openshift.io' | awk '{print $1}' | xargs -I{} oc delete crd {}
   oc get crds | grep velero | awk '{print $1}' | xargs -I{} oc delete crd {}
@@ -41,5 +45,3 @@ Work In Progress for a flowchart
   oc get clusterrolebindings | grep velero | awk '{print $1}' | xargs -I{} oc delete clusterrolebindings {}
 ```
 
-Prev Section: [Running the migration](./running-the-migration.md)<br>
-[Home](./README.md)
